@@ -16,13 +16,11 @@ public class GatewayServiceApplication {
     }
 
     @Bean
-    public RouteLocator customRouteLocator(RouteLocatorBuilder builder, LoggingGatewayFilterFactory loggingGatewayFilterFactory) {
+    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route(
                         "account-route", r -> r.path("/users/**")
-                                .filters(f -> f.stripPrefix(1)
-                                        .filter(loggingGatewayFilterFactory.apply(new LoggingGatewayFilterFactory.Config()))
-                                        .circuitBreaker(c -> c.setName("CircuitBreaker").getFallbackUri()))
+                                .filters(f -> f.stripPrefix(1))
                                 .uri("lb://account-service"))
                 .route(
                         "notification-route", r -> r.path("/notifications/**")
